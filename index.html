@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{YOUR NAME} — Network Scientist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Luckiest+Guy&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+
+<!-- ▼ 실제 포인트 폰트 직접 호스팅용. fonts/ 폴더에 파일을 넣고 경로만 맞추면 자동 적용됩니다.
+     Paper Kuto / Blocko Solid 가 없으면 아래 Luckiest Guy 로 폴백됩니다. -->
+<style>
+@font-face{
+  font-family:"Paper Kuto";
+  src:url("fonts/PaperKuto.woff2") format("woff2"),
+      url("fonts/PaperKuto.woff") format("woff"),
+      url("fonts/PaperKuto.ttf") format("truetype");
+  font-display:swap;
+}
+@font-face{
+  font-family:"Blocko Solid";
+  src:url("fonts/BlockoSolid.woff2") format("woff2"),
+      url("fonts/BlockoSolid.woff") format("woff"),
+      url("fonts/BlockoSolid.ttf") format("truetype");
+  font-display:swap;
+}
+</style>
+<style>
+:root{
+  --ink:#0C0C0D;
+  --paper:#F4F2EC;
+  --paper-2:#EAE7DD;
+  --acc:#FF1E6F;          /* neon magenta */
+  --acc-2:#E6FF02;        /* neon yellow — used only for "live" cues */
+  --line:rgba(12,12,13,.16);
+  --line-inv:rgba(244,242,236,.18);
+  --mono:"JetBrains Mono","Pretendard Variable",Pretendard,ui-monospace,monospace;
+  --disp:"Hanken Grotesk","Pretendard Variable",Pretendard,sans-serif;
+  --point:"Paper Kuto","Blocko Solid","Luckiest Guy",var(--disp);
+  --serif:"Instrument Serif","Pretendard Variable",Pretendard,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--disp);font-weight:400;letter-spacing:-.01em;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+::selection{background:var(--acc);color:#fff}
+
+/* grain overlay */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono);font-weight:500;letter-spacing:.02em}
+
+/* ============ NAV ============ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 28px;mix-blend-mode:difference;color:#fff;
+}
+nav .brand{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.08em}
+nav .brand b{color:var(--acc)}
+.navlinks{display:flex;gap:26px}
+.navlinks a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;opacity:.85;transition:opacity .2s}
+.navlinks a:hover{opacity:1}
+.navlinks a sup{color:var(--acc);font-size:9px;margin-right:3px}
+.menu-btn{display:none;font-family:var(--mono);font-size:12px;background:none;border:1px solid #fff;color:#fff;padding:6px 12px;cursor:pointer}
+
+/* ============ HERO (BLACK) ============ */
+.hero{
+  position:relative;min-height:100vh;background:var(--ink);color:var(--paper);
+  display:flex;align-items:center;overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.55}
+.hero-inner{position:relative;z-index:2;padding:0 28px;width:100%;max-width:1280px;margin:0 auto}
+.hero .tag{
+  font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--acc);
+  display:flex;align-items:center;gap:10px;margin-bottom:24px;
+}
+.hero .tag::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc-2);box-shadow:0 0 12px var(--acc-2);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.hero h1{
+  font-family:var(--point);
+  font-size:clamp(3rem,11vw,9.5rem);line-height:.9;font-weight:700;letter-spacing:.005em;
+  text-transform:uppercase;
+}
+.hero h1 em{font-family:var(--serif);font-style:italic;font-weight:400;text-transform:none;color:var(--acc)}
+.hero .sub{
+  margin-top:28px;max-width:560px;font-size:clamp(1rem,1.5vw,1.25rem);line-height:1.5;
+  font-weight:300;color:rgba(244,242,236,.8);
+}
+.hero .meta{
+  position:absolute;bottom:34px;left:28px;right:28px;z-index:2;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:rgba(244,242,236,.55);
+}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ============ SECTION SHELL ============ */
+section.block{padding:clamp(80px,11vw,150px) 28px;max-width:1280px;margin:0 auto}
+.sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:56px;border-bottom:1px solid var(--line);padding-bottom:18px}
+.sec-head .num{font-family:var(--mono);font-size:13px;color:var(--acc);font-weight:700}
+.sec-head h2{font-family:var(--point);font-size:clamp(1.9rem,4.6vw,3.3rem);font-weight:700;letter-spacing:.01em;text-transform:uppercase}
+.sec-head .en{margin-left:auto;font-family:var(--mono);font-size:11px;letter-spacing:.14em;opacity:.5;align-self:center}
+
+/* invert variant */
+.invert{background:var(--ink);color:var(--paper)}
+.invert .sec-head{border-color:var(--line-inv)}
+
+/* ============ ABOUT ============ */
+.about-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px}
+.about-id .name-big{font-size:clamp(2.4rem,6vw,4.6rem);font-weight:700;line-height:.95;letter-spacing:-.03em;margin-bottom:22px}
+.kv{display:flex;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.kv .k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;opacity:.55;width:120px;flex-shrink:0;padding-top:3px}
+.kv .v{font-size:1.05rem;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{font-family:var(--mono);font-size:11px;border:1px solid var(--line);padding:5px 11px;border-radius:100px;transition:.2s}
+.chip:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.vision{align-self:center}
+.vision .q{font-family:var(--serif);font-style:normal;font-size:clamp(1.6rem,3.4vw,2.7rem);line-height:1.32;letter-spacing:-.005em}
+.vision .q b{font-style:normal;font-family:var(--disp);background:var(--acc);color:#fff;padding:0 8px;border-radius:3px;font-weight:600}
+.vision .by{font-family:var(--mono);font-size:11px;letter-spacing:.1em;opacity:.5;margin-top:24px}
+
+/* ============ RESEARCH ============ */
+.interests{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-inv);border:1px solid var(--line-inv);margin-bottom:80px}
+.interest{background:var(--ink);padding:30px 26px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;transition:.3s}
+.interest:hover{background:#161617}
+.interest .no{font-family:var(--mono);font-size:11px;color:var(--acc)}
+.interest h3{font-size:1.5rem;font-weight:600;letter-spacing:-.01em;margin-top:auto}
+.interest p{font-size:.92rem;line-height:1.5;opacity:.6;margin-top:10px;font-weight:300}
+
+.pub-list{margin-top:10px}
+.subhead{font-family:var(--mono);font-size:12px;letter-spacing:.14em;opacity:.5;margin:0 0 22px}
+.pub{display:grid;grid-template-columns:64px 1fr auto;gap:22px;align-items:start;padding:22px 0;border-top:1px solid var(--line-inv);transition:.25s}
+.pub:hover{padding-left:10px}
+.pub:hover .pt{color:var(--acc)}
+.pub .yr{font-family:var(--mono);font-size:13px;opacity:.6;padding-top:4px}
+.pub .pt{font-size:1.18rem;font-weight:500;line-height:1.35;transition:.25s}
+.pub .au{font-size:.9rem;opacity:.55;margin-top:6px;font-weight:300}
+.pub .vn{font-family:var(--serif);font-style:italic;font-size:1.05rem;opacity:.8;margin-top:4px}
+.pub .lk{font-family:var(--mono);font-size:11px;opacity:.6;white-space:nowrap;padding-top:6px}
+.pub .lk:hover{color:var(--acc);opacity:1}
+.talks{margin-top:80px}
+/* poster accordion */
+.acc{border-top:1px solid var(--line-inv)}
+.acc:last-child{border-bottom:1px solid var(--line-inv)}
+.acc-head{width:100%;background:none;border:none;color:inherit;cursor:pointer;text-align:left;
+  display:grid;grid-template-columns:64px 1fr 32px;gap:22px;align-items:center;padding:22px 4px;transition:.25s;font-family:inherit}
+.acc-head:hover{padding-left:14px}
+.acc-head:hover .pt{color:var(--acc)}
+.acc-head .yr{font-family:var(--mono);font-size:13px;opacity:.6}
+.acc-title .pt{display:block;font-size:1.18rem;font-weight:500;line-height:1.35;transition:.25s}
+.acc-title .vn{display:block;font-family:var(--serif);font-style:italic;font-size:1.05rem;opacity:.75;margin-top:4px}
+.acc-icon{font-family:var(--mono);font-size:22px;font-weight:400;color:var(--acc);text-align:center;transition:transform .35s}
+.acc.open .acc-icon{transform:rotate(135deg)}
+.acc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s cubic-bezier(.2,.7,.2,1)}
+.acc.open .acc-panel{grid-template-rows:1fr}
+.acc-inner{overflow:hidden;min-height:0}
+.poster-frame{margin:6px 0 18px;background:#fff;border:1px solid var(--line-inv);border-radius:3px;
+  max-width:560px;overflow:hidden}
+.poster-frame.pdf{background:#222;height:680px;max-width:640px}
+.poster{display:block;width:100%;height:auto}
+.poster.missing{aspect-ratio:4/3;display:flex;background:#1a1a1b;min-height:200px}
+.poster-pdf{width:100%;height:100%;border:none;background:#222}
+.poster-actions{display:flex;gap:18px;padding-bottom:24px}
+.poster-actions a{font-family:var(--mono);font-size:11px;letter-spacing:.05em;opacity:.7;border-bottom:1px solid transparent;transition:.2s}
+.poster-actions a:hover{opacity:1;color:var(--acc);border-color:var(--acc)}
+
+/* ============ ACTIVITIES ============ */
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:54px}
+.act-col h3{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--acc);margin-bottom:24px}
+.act-item{padding:16px 0;border-top:1px solid var(--line);display:flex;gap:16px;align-items:baseline}
+.act-item .d{font-family:var(--mono);font-size:11px;opacity:.5;width:74px;flex-shrink:0}
+.act-item .t{font-size:1.02rem;line-height:1.4}
+.act-item .t span{display:block;font-size:.85rem;opacity:.55;font-weight:300;margin-top:3px}
+.awards{margin-top:70px}
+.award{display:flex;align-items:baseline;gap:20px;padding:18px 0;border-top:1px solid var(--line)}
+.award .yr{font-family:var(--mono);font-size:12px;color:var(--acc);width:60px;flex-shrink:0}
+.award .nm{font-size:1.3rem;font-weight:500}
+.award .nm span{font-family:var(--mono);font-size:11px;opacity:.5;font-weight:400;margin-left:8px}
+
+/* ============ PHOTOS ============ */
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:14px}
+.ph{position:relative;overflow:hidden;background:#1a1a1b;filter:grayscale(1);transition:filter .4s}
+.ph:hover{filter:grayscale(0)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.ph:hover img{transform:scale(1.06)}
+.ph.tall{grid-row:span 2}
+.ph.wide{grid-column:span 2}
+.ph .cap{position:absolute;left:12px;bottom:12px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:#fff;background:rgba(0,0,0,.5);padding:3px 8px;opacity:0;transition:.3s}
+.ph:hover .cap{opacity:1}
+
+/* ============ BLOG / BRAINSTORM ============ */
+.blog-intro{max-width:620px;font-size:1.1rem;line-height:1.6;font-weight:300;opacity:.75;margin-bottom:40px}
+.bs-wrap{position:relative;border:1px solid var(--line-inv);border-radius:4px;overflow:hidden;background:radial-gradient(circle at 30% 20%,#161620,#0a0a0c)}
+.bs-bar{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line-inv);flex-wrap:wrap}
+.bs-bar .live{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--acc-2);display:flex;align-items:center;gap:8px}
+.bs-bar .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--acc-2);box-shadow:0 0 10px var(--acc-2);animation:pulse 1.4s infinite}
+.bs-bar .hint{font-family:var(--mono);font-size:11px;opacity:.5;margin-left:auto}
+#bsStage{position:relative;width:100%;height:520px;cursor:grab;touch-action:none}
+#bsStage.drag{cursor:grabbing}
+#bsSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.node{
+  position:absolute;transform:translate(-50%,-50%);user-select:none;cursor:pointer;
+  padding:9px 15px;border-radius:100px;font-size:13px;line-height:1.25;
+  text-align:center;max-width:200px;transition:box-shadow .2s,border-color .2s;
+  border:1px solid rgba(244,242,236,.25);background:rgba(20,20,24,.85);color:var(--paper);
+  backdrop-filter:blur(4px);
+}
+.node.q{
+  font-family:var(--disp);font-weight:600;font-size:14px;
+  border-color:var(--acc);color:#fff;background:rgba(255,30,111,.14);
+  box-shadow:0 0 0 1px rgba(255,30,111,.25),0 0 24px rgba(255,30,111,.18);
+}
+.node.idea{font-weight:300;border-style:dashed}
+.node:hover{box-shadow:0 0 0 2px var(--acc-2)}
+.bs-input{
+  position:absolute;z-index:30;transform:translate(-50%,-50%);
+  background:var(--ink);border:1px solid var(--acc-2);border-radius:100px;
+  padding:6px 8px;display:none;align-items:center;gap:6px;
+}
+.bs-input input{background:none;border:none;outline:none;color:var(--paper);font-family:var(--disp);font-size:13px;width:160px}
+.bs-input button{background:var(--acc-2);border:none;border-radius:100px;padding:5px 12px;font-family:var(--mono);font-size:11px;cursor:pointer;font-weight:700}
+
+.blog-cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:60px}
+.bcard{border:1px solid var(--line-inv);border-radius:4px;padding:30px;transition:.3s;cursor:pointer}
+.bcard:hover{background:#141416;transform:translateY(-3px)}
+.bcard .lab{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--acc);margin-bottom:16px}
+.bcard h3{font-size:1.6rem;font-weight:600;letter-spacing:-.02em;margin-bottom:10px}
+.bcard p{font-size:.95rem;line-height:1.55;opacity:.6;font-weight:300}
+.bcard.locked{position:relative}
+.bcard.locked .lock{position:absolute;top:26px;right:26px;font-family:var(--mono);font-size:11px;opacity:.6}
+.gate{margin-top:18px;display:flex;gap:8px}
+.gate input{flex:1;background:transparent;border:1px solid var(--line-inv);border-radius:3px;padding:9px 12px;color:var(--paper);font-family:var(--mono);font-size:12px;outline:none}
+.gate input:focus{border-color:var(--acc)}
+.gate button{background:var(--paper);color:var(--ink);border:none;border-radius:3px;padding:0 16px;font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer}
+.gate-msg{font-family:var(--mono);font-size:11px;margin-top:10px;min-height:14px;color:var(--acc)}
+
+/* ============ FOOTER ============ */
+footer{background:var(--ink);color:var(--paper);padding:90px 28px 40px;text-align:center}
+footer .big{font-family:var(--point);font-size:clamp(2rem,8vw,6rem);font-weight:700;letter-spacing:.01em;text-transform:uppercase;line-height:.95}
+footer .big em{font-family:var(--serif);font-style:italic;text-transform:none;color:var(--acc);font-weight:400}
+footer .links{display:flex;gap:30px;justify-content:center;margin-top:40px;flex-wrap:wrap}
+footer .links a{font-family:var(--mono);font-size:12px;letter-spacing:.06em;opacity:.7;transition:.2s}
+footer .links a:hover{opacity:1;color:var(--acc)}
+footer .copy{font-family:var(--mono);font-size:10px;opacity:.4;margin-top:50px;letter-spacing:.08em}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:860px){
+  .navlinks{display:none}
+  .navlinks.open{display:flex;position:fixed;inset:0;background:var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:30px;mix-blend-mode:normal}
+  .navlinks.open a{font-size:18px;opacity:1}
+  .menu-btn{display:block}
+  .about-grid,.act-grid,.blog-cards{grid-template-columns:1fr;gap:40px}
+  .interests{grid-template-columns:1fr}
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:160px}
+  .pub{grid-template-columns:50px 1fr;gap:14px}
+  .pub .lk{grid-column:2;padding-top:0}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#top" class="brand">{INITIALS}<b>.</b>net</a>
+  <div class="navlinks" id="navlinks">
+    <a href="#about"><sup>01</sup>ABOUT</a>
+    <a href="#research"><sup>02</sup>RESEARCH</a>
+    <a href="#activities"><sup>03</sup>ACTIVITIES</a>
+    <a href="#photos"><sup>04</sup>PHOTOS</a>
+    <a href="#blog"><sup>05</sup>BLOG</a>
+  </div>
+  <button class="menu-btn" id="menuBtn">MENU</button>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="tag rv">Ph.D. CANDIDATE / OPEN TO COLLABORATION</div>
+    <h1 class="rv">YOUR<br>NAME<em>.</em></h1><!-- ← 본인 이름(영문)으로 교체 -->
+    <p class="sub rv">복잡계와 네트워크 과학을 연구합니다. 연결의 구조 속에서 작동하는 숨은 규칙을 찾고, 그것으로 더 나은 질문을 만드는 일에 관심이 있어요.</p>
+  </div>
+  <div class="meta">
+    <span>NETWORK SCIENCE · COMPLEX SYSTEMS</span>
+    <span>SCROLL ↓ TO EXPLORE THE GRAPH</span>
+    <span>SEOUL, KR · 2026</span>
+  </div>
+</header>
+
+<!-- ============ 01 ABOUT ============ -->
+<section class="block" id="about">
+  <div class="sec-head rv"><span class="num">01</span><h2>About</h2><span class="en">/ WHO &amp; WHY</span></div>
+  <div class="about-grid">
+    <div class="about-id rv">
+      <div class="name-big">{YOUR NAME}<br>{한글 이름}</div>
+      <div class="kv"><div class="k">FIELD</div><div class="v">Network Science · Complex Systems</div></div>
+      <div class="kv"><div class="k">INTERESTS</div><div class="v"><div class="chips">
+        <span class="chip">Temporal Networks</span><span class="chip">Community Detection</span>
+        <span class="chip">Higher-order Structure</span><span class="chip">Spreading Dynamics</span>
+        <span class="chip">Network Embedding</span>
+      </div></div></div>
+      <div class="kv"><div class="k">AFFILIATION</div><div class="v">{학교 / 연구실명}<br>Dept. of {학과}, Ph.D. Candidate</div></div>
+      <div class="kv"><div class="k">CONTACT</div><div class="v">
+        <a href="mailto:you@univ.ac.kr" class="mono" style="border-bottom:1px solid var(--acc)">you@univ.ac.kr</a><br>
+        <span class="mono" style="font-size:.85rem;opacity:.6">scholar · github · x · linkedin</span>
+      </div></div>
+    </div>
+    <div class="vision rv">
+      <p class="q">나의 목표는 <b>연결</b>이 만들어내는 패턴을 읽어, 사람들이 더 나은 <em>질문</em>을 던지도록 돕는 것입니다.</p>
+      <p class="by">— RESEARCH PHILOSOPHY / 지향성</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 RESEARCH ============ -->
+<section class="block invert" id="research">
+  <div class="sec-head rv"><span class="num">02</span><h2>Research</h2><span class="en">/ INTERESTS · TALKS · PAPERS</span></div>
+
+  <div class="interests rv">
+    <div class="interest"><span class="no">R.01</span><h3>Temporal Networks</h3><p>시간에 따라 변하는 연결 구조와 그 위에서 일어나는 동역학.</p></div>
+    <div class="interest"><span class="no">R.02</span><h3>Higher-order Interaction</h3><p>쌍을 넘어서는 다자간 상호작용을 simplicial / hypergraph로 모델링.</p></div>
+    <div class="interest"><span class="no">R.03</span><h3>Community &amp; Mesoscale</h3><p>네트워크의 중간 규모 구조와 그 발견·해석 방법론.</p></div>
+  </div>
+
+  <div class="pub-list rv">
+    <p class="subhead">PUBLICATIONS / 논문</p>
+    <div class="pub">
+      <div class="yr">2025</div>
+      <div><div class="pt">{논문 제목을 여기에 — 예: Higher-order temporal motifs reveal hidden roles in collaboration networks}</div>
+        <div class="au">{Your Name}, Co-author, Advisor</div>
+        <div class="vn">Physical Review E (under review)</div></div>
+      <a href="#" class="lk">PDF ↗ · arXiv ↗</a>
+    </div>
+    <div class="pub">
+      <div class="yr">2024</div>
+      <div><div class="pt">{논문 제목 두 번째}</div>
+        <div class="au">{Your Name}, Co-author</div>
+        <div class="vn">Journal of Complex Networks</div></div>
+      <a href="#" class="lk">DOI ↗</a>
+    </div>
+    <div class="pub">
+      <div class="yr">2023</div>
+      <div><div class="pt">{학부/석사 시절 첫 논문 제목}</div>
+        <div class="au">Co-author, {Your Name}</div>
+        <div class="vn">Conference Proceedings</div></div>
+      <a href="#" class="lk">LINK ↗</a>
+    </div>
+  </div>
+
+  <div class="talks rv">
+    <p class="subhead">POSTERS &amp; TALKS / 발표 — 행을 클릭하면 포스터가 펼쳐집니다</p>
+
+    <!-- ▼ IMAGE 포스터 예시 -->
+    <div class="acc">
+      <button class="acc-head" type="button">
+        <span class="yr">2025</span>
+        <span class="acc-title">
+          <span class="pt">{발표 제목 — 예: Reading the rhythm of temporal graphs}</span>
+          <span class="vn">NetSci 2025 · Poster</span>
+        </span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-panel"><div class="acc-inner">
+        <div class="poster-frame">
+          <img class="poster" src="posters/netsci2025.jpg" alt="NetSci 2025 poster" loading="lazy"
+               onerror="this.classList.add('missing');this.alt='posters/netsci2025.jpg — 파일을 넣어주세요'">
+        </div>
+        <div class="poster-actions">
+          <a href="posters/netsci2025.jpg" target="_blank">크게 보기 ↗</a>
+          <a href="posters/netsci2025.jpg" download>다운로드 ↓</a>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ▼ PDF 포스터 예시 -->
+    <div class="acc">
+      <button class="acc-head" type="button">
+        <span class="yr">2024</span>
+        <span class="acc-title">
+          <span class="pt">{포스터 발표 제목}</span>
+          <span class="vn">한국복잡계학회 · Poster (PDF)</span>
+        </span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-panel"><div class="acc-inner">
+        <div class="poster-frame pdf">
+          <iframe class="poster-pdf" src="posters/complexsystems2024.pdf" loading="lazy" title="poster pdf"></iframe>
+        </div>
+        <div class="poster-actions">
+          <a href="posters/complexsystems2024.pdf" target="_blank">새 탭에서 열기 ↗</a>
+          <a href="posters/complexsystems2024.pdf" download>다운로드 ↓</a>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- ▼ 행 복사해서 포스터 계속 추가 -->
+    <div class="acc">
+      <button class="acc-head" type="button">
+        <span class="yr">2023</span>
+        <span class="acc-title">
+          <span class="pt">{발표 제목}</span>
+          <span class="vn">{학회명} · Oral / Poster</span>
+        </span>
+        <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-panel"><div class="acc-inner">
+        <div class="poster-frame">
+          <img class="poster" src="posters/poster2023.jpg" alt="2023 poster" loading="lazy"
+               onerror="this.classList.add('missing');this.alt='posters/poster2023.jpg — 파일을 넣어주세요'">
+        </div>
+        <div class="poster-actions">
+          <a href="posters/poster2023.jpg" target="_blank">크게 보기 ↗</a>
+          <a href="posters/poster2023.jpg" download>다운로드 ↓</a>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 ACTIVITIES ============ -->
+<section class="block" id="activities">
+  <div class="sec-head rv"><span class="num">03</span><h2>Activities</h2><span class="en">/ COMMUNITY &amp; SERVICE</span></div>
+  <div class="act-grid">
+    <div class="act-col rv">
+      <h3>SCHOOLS · WORKSHOPS · CONFERENCES</h3>
+      <div class="act-item"><div class="d">2025</div><div class="t">NetSci 2025 참가<span>International School & Conference on Network Science</span></div></div>
+      <div class="act-item"><div class="d">2024</div><div class="t">Complex Systems Summer School<span>{기관명} · 2주 집중 프로그램</span></div></div>
+      <div class="act-item"><div class="d">2024</div><div class="t">한국복잡계학회 워크샵<span>발표 및 패널 참여</span></div></div>
+      <div class="act-item"><div class="d">2023</div><div class="t">{기타 스쿨 / 워크샵}<span>{설명}</span></div></div>
+    </div>
+    <div class="act-col rv">
+      <h3>SERVICE · LEADERSHIP</h3>
+      <div class="act-item"><div class="d">2025</div><div class="t">대학원 홍보단<span>{학교명} Graduate Ambassador</span></div></div>
+      <div class="act-item"><div class="d">2024</div><div class="t">창업 프로그램 참여<span>{프로그램명} · 팀 {역할}</span></div></div>
+      <div class="act-item"><div class="d">2024</div><div class="t">위성 학회 간사<span>{학회명} Satellite Session Secretary</span></div></div>
+      <div class="act-item"><div class="d">2023</div><div class="t">트랙 파티 위원회<span>{학교/학과} 행사 기획</span></div></div>
+    </div>
+  </div>
+  <div class="awards rv">
+    <p class="subhead" style="opacity:.5">AWARDS &amp; HONORS / 수상</p>
+    <div class="award"><div class="yr">2025</div><div class="nm">{수상명} <span>{수여 기관}</span></div></div>
+    <div class="award"><div class="yr">2024</div><div class="nm">Best Poster Award <span>{학회명}</span></div></div>
+    <div class="award"><div class="yr">2023</div><div class="nm">{장학금 / 우수상} <span>{기관}</span></div></div>
+  </div>
+</section>
+
+<!-- ============ 04 PHOTOS ============ -->
+<section class="block invert" id="photos">
+  <div class="sec-head rv"><span class="num">04</span><h2>Photos</h2><span class="en">/ MOMENTS</span></div>
+  <div class="gallery rv">
+    <div class="ph tall"><img src="https://picsum.photos/seed/net1/600/800" alt=""><span class="cap">NetSci 2025</span></div>
+    <div class="ph"><img src="https://picsum.photos/seed/net2/500/500" alt=""><span class="cap">Lab</span></div>
+    <div class="ph wide"><img src="https://picsum.photos/seed/net3/1000/500" alt=""><span class="cap">Summer School</span></div>
+    <div class="ph"><img src="https://picsum.photos/seed/net4/500/500" alt=""><span class="cap">Talk</span></div>
+    <div class="ph"><img src="https://picsum.photos/seed/net5/500/500" alt=""><span class="cap">Workshop</span></div>
+    <div class="ph wide"><img src="https://picsum.photos/seed/net6/1000/500" alt=""><span class="cap">Team</span></div>
+  </div>
+  <p class="mono" style="opacity:.4;font-size:11px;margin-top:18px">※ 이미지는 자리표시용입니다. 본인 사진 경로로 교체하세요.</p>
+</section>
+
+<!-- ============ 05 BLOG ============ -->
+<section class="block invert" id="blog" style="padding-top:0">
+  <div class="sec-head rv"><span class="num">05</span><h2>Blog</h2><span class="en">/ THINK OUT LOUD</span></div>
+  <p class="blog-intro rv">연구는 결국 좋은 질문에서 시작합니다. 아래 보드에 떠 있는 research question에 당신의 생각을 노드로 붙여보세요 — 함께 만드는 brainstorming cloud입니다.</p>
+
+  <div class="bs-wrap rv">
+    <div class="bs-bar">
+      <span class="live">LIVE BRAINSTORM</span>
+      <span class="hint">질문 노드를 클릭 → 아이디어 추가 · 빈 곳 드래그 → 보드 이동</span>
+    </div>
+    <div id="bsStage">
+      <svg id="bsSvg"></svg>
+      <div class="bs-input" id="bsInput"><input type="text" id="bsField" placeholder="아이디어를 적어주세요…" maxlength="60"><button id="bsAdd">연결 +</button></div>
+    </div>
+  </div>
+
+  <div class="blog-cards">
+    <div class="bcard rv" onclick="alert('생각 아카이브 — 실제 글 목록 페이지로 연결하세요.')">
+      <div class="lab">02 / ARCHIVE</div>
+      <h3>생각 아카이빙</h3>
+      <p>연구하다 스친 메모, 읽은 논문에 대한 짧은 코멘트, 다듬어지지 않은 생각들을 시간순으로 쌓아두는 공간.</p>
+    </div>
+    <div class="bcard locked rv">
+      <span class="lock">🔒 PRIVATE</span>
+      <div class="lab">03 / VAULT</div>
+      <h3>연구 주제 모음집</h3>
+      <p>아직 누구에게도 보여주기 이른 아이디어들. 나만 볼 수 있는 잠긴 서랍.</p>
+      <div class="gate">
+        <input type="password" id="vaultPw" placeholder="passcode">
+        <button id="vaultBtn">OPEN</button>
+      </div>
+      <div class="gate-msg" id="vaultMsg"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="big rv">LET'S<br>CONNECT<em>.</em></div>
+  <div class="links rv">
+    <a href="mailto:you@univ.ac.kr">EMAIL</a>
+    <a href="#">GOOGLE SCHOLAR</a>
+    <a href="#">GITHUB</a>
+    <a href="#">X / TWITTER</a>
+    <a href="#">LINKEDIN</a>
+  </div>
+  <div class="copy">© 2026 {YOUR NAME} · BUILT AS A NETWORK · ALL NODES RESERVED</div>
+</footer>
+
+<script>
+/* ---------- mobile menu ---------- */
+const mb=document.getElementById('menuBtn'),nl=document.getElementById('navlinks');
+mb.addEventListener('click',()=>{nl.classList.toggle('open');mb.textContent=nl.classList.contains('open')?'CLOSE':'MENU'});
+nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nl.classList.remove('open');mb.textContent='MENU'}));
+
+/* ---------- reveal on scroll ---------- */
+const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*0.06)+'s';io.observe(el)});
+
+/* ---------- poster accordion ---------- */
+document.querySelectorAll('.acc-head').forEach(h=>{
+  h.addEventListener('click',()=>h.parentElement.classList.toggle('open'));
+});
+
+/* ---------- hero ambient network ---------- */
+(function(){
+  const c=document.getElementById('heroCanvas'),x=c.getContext('2d');
+  let w,h,pts;const DPR=Math.min(devicePixelRatio||1,2);
+  function size(){w=c.clientWidth;h=c.clientHeight;c.width=w*DPR;c.height=h*DPR;x.setTransform(DPR,0,0,DPR,0,0);
+    const n=Math.min(70,Math.floor(w*h/16000));pts=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.8+.6}));}
+  size();addEventListener('resize',size);
+  let mx=-999,my=-999;
+  c.addEventListener('mousemove',e=>{const b=c.getBoundingClientRect();mx=e.clientX-b.left;my=e.clientY-b.top});
+  c.addEventListener('mouseleave',()=>{mx=-999;my=-999});
+  function loop(){
+    x.clearRect(0,0,w,h);
+    for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>w)p.vx*=-1;if(p.y<0||p.y>h)p.vy*=-1;}
+    for(let i=0;i<pts.length;i++){for(let j=i+1;j<pts.length;j++){
+      const a=pts[i],b=pts[j],d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<130){x.strokeStyle='rgba(244,242,236,'+(.16*(1-d/130))+')';x.lineWidth=.6;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke();}
+    }}
+    for(const p of pts){
+      const dm=Math.hypot(p.x-mx,p.y-my),near=dm<140;
+      x.beginPath();x.arc(p.x,p.y,p.r*(near?2:1),0,7);
+      x.fillStyle=near?'#FF1E6F':'rgba(244,242,236,.7)';x.fill();
+      if(near){x.strokeStyle='rgba(255,30,111,'+(1-dm/140)*.5+')';x.lineWidth=.7;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(mx,my);x.stroke();}
+    }
+    requestAnimationFrame(loop);
+  }loop();
+})();
+
+/* ---------- interactive brainstorm graph ---------- */
+(function(){
+  const stage=document.getElementById('bsStage'),svg=document.getElementById('bsSvg');
+  const inputBox=document.getElementById('bsInput'),field=document.getElementById('bsField'),addBtn=document.getElementById('bsAdd');
+  let W=stage.clientWidth,H=stage.clientHeight;
+  addEventListener('resize',()=>{W=stage.clientWidth;H=stage.clientHeight});
+
+  // seed research questions (네트워크 과학 예시 — 본인 질문으로 교체 가능)
+  let nodes=[
+    {id:0,t:'시간에 따라 변하는 네트워크에서 "역할"은 어떻게 드러나는가?',q:true,x:W*.32,y:H*.34},
+    {id:1,t:'다자간 상호작용(higher-order)은 확산 동역학을 어떻게 바꾸는가?',q:true,x:W*.68,y:H*.62},
+    {id:2,t:'좋은 community란 무엇으로 정의되어야 하는가?',q:true,x:W*.5,y:H*.2},
+  ];
+  let edges=[],seed=100,active=null,pendingQ=null;
+  nodes.forEach(n=>{n.vx=0;n.vy=0;});
+
+  const el=new Map();
+  function build(){
+    // edges
+    svg.innerHTML='';
+    edges.forEach(e=>{const a=nodes.find(n=>n.id===e.a),b=nodes.find(n=>n.id===e.b);if(!a||!b)return;
+      const l=document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('stroke','rgba(230,255,2,.4)');l.setAttribute('stroke-width','1');l.dataset.a=e.a;l.dataset.b=e.b;svg.appendChild(l);});
+    // nodes
+    el.forEach(d=>d.remove());el.clear();
+    nodes.forEach(n=>{
+      const d=document.createElement('div');d.className='node '+(n.q?'q':'idea');d.textContent=n.t;
+      d.addEventListener('mousedown',ev=>startDrag(ev,n));
+      d.addEventListener('touchstart',ev=>startDrag(ev,n),{passive:false});
+      d.addEventListener('click',ev=>{if(!moved){onNode(n,ev)}});
+      stage.appendChild(d);el.set(n.id,d);
+    });
+    render();
+  }
+  function render(){
+    nodes.forEach(n=>{const d=el.get(n.id);if(d){d.style.left=n.x+'px';d.style.top=n.y+'px';}});
+    svg.querySelectorAll('line').forEach(l=>{const a=nodes.find(n=>n.id==l.dataset.a),b=nodes.find(n=>n.id==l.dataset.b);
+      if(a&&b){l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);}});
+  }
+
+  // simple force layout
+  function tick(){
+    for(let i=0;i<nodes.length;i++){const a=nodes[i];if(a===dragging)continue;
+      for(let j=0;j<nodes.length;j++){if(i===j)continue;const b=nodes[j];
+        let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||1;if(d<170){const f=(170-d)/d*.04;a.vx+=dx*f;a.vy+=dy*f;}}
+    }
+    edges.forEach(e=>{const a=nodes.find(n=>n.id===e.a),b=nodes.find(n=>n.id===e.b);if(!a||!b)return;
+      let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1,f=(d-130)*.008;
+      if(a!==dragging){a.vx+=dx/d*f;a.vy+=dy/d*f;}if(b!==dragging){b.vx-=dx/d*f;b.vy-=dy/d*f;}});
+    nodes.forEach(n=>{if(n===dragging)return;
+      n.vx+=(W/2-n.x)*.0006;n.vy+=(H/2-n.y)*.0006;n.vx*=.85;n.vy*=.85;n.x+=n.vx;n.y+=n.vy;
+      n.x=Math.max(70,Math.min(W-70,n.x));n.y=Math.max(40,Math.min(H-40,n.y));});
+    render();requestAnimationFrame(tick);
+  }
+
+  // dragging
+  let dragging=null,moved=false,offx=0,offy=0;
+  function pt(ev){const b=stage.getBoundingClientRect(),t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top}}
+  function startDrag(ev,n){ev.preventDefault();moved=false;dragging=n;const p=pt(ev);offx=n.x-p.x;offy=n.y-p.y;stage.classList.add('drag');}
+  function moveDrag(ev){if(!dragging)return;const p=pt(ev);const nx=p.x+offx,ny=p.y+offy;if(Math.hypot(nx-dragging.x,ny-dragging.y)>3)moved=true;dragging.x=nx;dragging.y=ny;dragging.vx=0;dragging.vy=0;render();}
+  function endDrag(){dragging=null;stage.classList.remove('drag');}
+  addEventListener('mousemove',moveDrag);addEventListener('mouseup',endDrag);
+  addEventListener('touchmove',moveDrag,{passive:false});addEventListener('touchend',endDrag);
+
+  // click a question -> open input near it
+  function onNode(n,ev){
+    if(!n.q)return;pendingQ=n;
+    inputBox.style.display='flex';inputBox.style.left=n.x+'px';inputBox.style.top=(n.y-46)+'px';
+    field.value='';setTimeout(()=>field.focus(),10);
+  }
+  function commit(){
+    const v=field.value.trim();if(!v||!pendingQ)return;
+    const id=seed++;nodes.push({id,t:v,q:false,x:pendingQ.x+(Math.random()-.5)*120,y:pendingQ.y+(Math.random()-.5)*120,vx:0,vy:0});
+    edges.push({a:pendingQ.id,b:id});inputBox.style.display='none';pendingQ=null;build();
+  }
+  addBtn.addEventListener('click',commit);
+  field.addEventListener('keydown',e=>{if(e.key==='Enter')commit();if(e.key==='Escape')inputBox.style.display='none'});
+  stage.addEventListener('mousedown',e=>{if(e.target===stage||e.target===svg)inputBox.style.display='none'});
+
+  build();tick();
+})();
+
+/* ---------- private vault (demo gate — 실제 보안 아님) ---------- */
+(function(){
+  const pw=document.getElementById('vaultPw'),btn=document.getElementById('vaultBtn'),msg=document.getElementById('vaultMsg');
+  const PASS='network';  // ← 원하는 코드로 변경. 실제 비공개는 서버 인증 필요.
+  function tryOpen(){
+    if(pw.value===PASS){msg.style.color='var(--acc-2)';msg.textContent='✓ 열림 — 여기에 비공개 주제 목록을 연결하세요.';}
+    else{msg.style.color='var(--acc)';msg.textContent='✗ passcode가 일치하지 않습니다.';}
+  }
+  btn.addEventListener('click',e=>{e.stopPropagation();tryOpen()});
+  pw.addEventListener('click',e=>e.stopPropagation());
+  pw.addEventListener('keydown',e=>{if(e.key==='Enter'){e.stopPropagation();tryOpen()}});
+})();
+</script>
+</body>
+</html>
